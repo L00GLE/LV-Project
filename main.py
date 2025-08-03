@@ -47,7 +47,7 @@ X_scaled = scaler.fit_transform(x)
 
 ### TRAIN LOGISTIC MODEL ###
 # Split data into training and testing sets
-X_train, X_test, Y_train, Y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+X_train, X_test, Y_train, Y_test = train_test_split(X_scaled, y, test_size=0.3, random_state=43)
 
 # Train a Logistic Regression model
 lr = LogisticRegression(max_iter=10000)  # increase max_iter if model doesn't converge
@@ -55,10 +55,6 @@ lr.fit(X_train, Y_train)
 
 # Make predictions on the test set
 Y_prediction = lr.predict(X_test)
-
-# Evaluate accuracy
-accuracy = accuracy_score(Y_test, Y_prediction)
-print(f'Accuracy: {accuracy: .2f}')
 
 # Classification report for detailed evaluation
 print(classification_report(Y_test, Y_prediction))
@@ -72,7 +68,7 @@ else:
 # More models for comparison
 
 models = {
-    "Decision Tree": DecisionTreeClassifier()
+    "Decision Tree": DecisionTreeClassifier(), "Random Forest": RandomForestClassifier()
 }
 
 for name, model in models.items():
@@ -80,9 +76,13 @@ for name, model in models.items():
     preds = model.predict(X_test)
     print(f"{name} Accuracy: {accuracy_score(Y_test, preds):.2f}")
 
+# Evaluate LR accuracy
+accuracy = accuracy_score(Y_test, Y_prediction)
+print(f'Logistic Regression Accuracy: {accuracy: .2f}')
+
 ### Model Perfomance Comparison ###
 
-# ROC
+# Logistic Regression ROC
 
 y_prob_lr = lr.predict_proba(X_test)[:, 1]
 fpr_lr, tpr_lr, _ = roc_curve(Y_test, y_prob_lr)
@@ -92,10 +92,19 @@ roc_auc_lr = auc(fpr_lr, tpr_lr)
 dt = DecisionTreeClassifier()
 dt.fit(X_train, Y_train)
 
-# Predict probabilities for ROC
+# Train Random Forest model
+rf = RandomForestClassifier()
+rf.fit(X_train, Y_train)
+
+# Predict probabilities for Decision Tree ROC
 y_prob_dt = dt.predict_proba(X_test)[:, 1]
 fpr_dt, tpr_dt, _ = roc_curve(Y_test, y_prob_dt)
 roc_auc_dt = auc(fpr_dt, tpr_dt)
+
+# Predict probablities for Random Forest ROC
+y_prob_rf = dt.predict_proba(X_test)[:, 1]
+fpr_rf, tpr_rf, _ = roc_curve(Y_test, y_prob_rf)
+roc_auc_rf = auc(fpr_rf,tpr_rf )
 
 # Cross-Validation Scores
 cv_scores = cross_val_score(LogisticRegression(max_iter=10000), X_scaled, y, cv=5)
@@ -182,6 +191,10 @@ plt.plot(fpr_lr, tpr_lr, color='darkorange', lw=2,
 # Decision Tree
 plt.plot(fpr_dt, tpr_dt, color='green', lw=2,
          label=f'Decision Tree (AUC = {roc_auc_dt:.2f})')
+
+# Random Forest
+plt.plot(fpr_dt, tpr_dt, color='blue', lw=2,
+         label=f'Random Forest (AUC = {roc_auc_rf: .2f} )')
 
 # Baseline
 plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
