@@ -25,7 +25,8 @@ print(data.info())
 print(data.describe())
 
 # Drop unnecessary columns
-data.drop(['Unnamed: 32'], axis=1, inplace=True)
+data.drop(['Unnamed: 32', 'id'], axis=1, inplace=True)
+data.head()
 
 # Convert diagnosis column
 le = LabelEncoder()
@@ -47,8 +48,7 @@ X_scaled = scaler.fit_transform(x)
 
 ### TRAIN LOGISTIC MODEL ###
 # Split data into training and testing sets
-X_train, X_test, Y_train, Y_test = train_test_split(X_scaled, y, test_size=0.3, random_state=43)
-
+X_train, X_test, Y_train, Y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
 # Train a Logistic Regression model
 lr = LogisticRegression(max_iter=10000)  # increase max_iter if model doesn't converge
 lr.fit(X_train, Y_train)
@@ -102,7 +102,7 @@ fpr_dt, tpr_dt, _ = roc_curve(Y_test, y_prob_dt)
 roc_auc_dt = auc(fpr_dt, tpr_dt)
 
 # Predict probablities for Random Forest ROC
-y_prob_rf = dt.predict_proba(X_test)[:, 1]
+y_prob_rf = rf.predict_proba(X_test)[:, 1]
 fpr_rf, tpr_rf, _ = roc_curve(Y_test, y_prob_rf)
 roc_auc_rf = auc(fpr_rf,tpr_rf )
 
