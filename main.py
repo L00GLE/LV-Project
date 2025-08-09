@@ -1,3 +1,6 @@
+# Louie Viray
+# Gavilan College
+# SJSU, SJCC, Gavilan STEM Summer Internship 2025
 import pandas as pd
 import seaborn as sns
 import numpy as np
@@ -193,7 +196,7 @@ plt.plot(fpr_dt, tpr_dt, color='green', lw=2,
          label=f'Decision Tree (AUC = {roc_auc_dt:.2f})')
 
 # Random Forest
-plt.plot(fpr_dt, tpr_dt, color='blue', lw=2,
+plt.plot(fpr_rf, tpr_rf, color='blue', lw=2,
          label=f'Random Forest (AUC = {roc_auc_rf: .2f} )')
 
 # Baseline
