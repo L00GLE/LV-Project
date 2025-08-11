@@ -6,6 +6,7 @@ import pandas as pd
 import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
+import joblib
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
@@ -52,7 +53,7 @@ X_scaled = scaler.fit_transform(x)
 
 ### TRAIN LOGISTIC MODEL ###
 # Split data into training and testing sets
-X_train, X_test, Y_train, Y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+X_train, X_test, Y_train, Y_test = train_test_split(X_scaled, y, test_size=0.3, random_state=50)
 # Train a Logistic Regression model
 lr = LogisticRegression(max_iter=10000)  # increase max_iter if model doesn't converge
 lr.fit(X_train, Y_train)
@@ -62,12 +63,6 @@ Y_prediction = lr.predict(X_test)
 
 # Classification report for detailed evaluation
 print(classification_report(Y_test, Y_prediction))
-
-# Check predictions and print whether the tumor is Malignant or Benign
-if Y_prediction[0] == 1:
-    print("The tumor is likely Malignant.")
-else:
-    print("The tumor is likely Benign.")
 
 # More models for comparison
 
@@ -113,6 +108,19 @@ roc_auc_rf = auc(fpr_rf,tpr_rf )
 # Cross-Validation Scores
 cv_scores = cross_val_score(LogisticRegression(max_iter=10000), X_scaled, y, cv=5)
 print(f"Cross-validation Accuracy: {np.mean(cv_scores):.2f}")
+
+# Count total samples
+total_samples = len(data)
+
+# Count benign samples (diagnosis == 0)
+benign_count = (data['diagnosis'] == 0).sum()
+
+# Calculate percentage
+benign_percentage = (benign_count / total_samples) * 100
+
+print(f"Benign tumors: {benign_count} out of {total_samples} samples ({benign_percentage:.2f}%)")
+
+
 
 
 ### Visualisations ###
